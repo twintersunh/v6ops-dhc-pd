@@ -7,7 +7,7 @@
 <?rfc compact="yes"?>
 <?rfc comments="yes"?>
 <?rfc inline="yes"?>
-<rfc category="info" ipr="trust200902" updates="7084" docName="draft-winters-v6ops-cpe-lan-pd-00">
+<rfc category="info" ipr="trust200902" updates="7084" docName="draft-winters-v6ops-cpe-lan-pd-01">
   <front>
     <title>IPv6 CE Routers LAN Prefix Delegation</title>
 
@@ -26,7 +26,7 @@
     </author>
 
 
-    <date year="2022" />
+    <date year="2023" />
     <area> Internet </area>
     <workgroup>Internet Engineering Task Force</workgroup>
     <keyword>IPv6</keyword>
@@ -48,7 +48,8 @@
     a prefix larger then /64 to the CE Router as recommended in <xref target="RFC6177" />. If a IPv6 CE 
     Router doesn't support IA_PD on the LAN it will not be able to assign any prefixes beyond itself limiting
     the usefulness of assigning prefixes larger then /64.  Supporting IA_PD on the LAN interfaces will allow
-    for those prefixes to be distributed into a network to be useable.</t>
+    for those prefixes to be distributed into a network to be useable. This document does not cover dealing with 
+    multi provisioned networks with more then one provider.</t>
     </section>
     <section anchor="Requirements Language" title="Requirements Language">
 
@@ -71,7 +72,7 @@
     <section anchor="Terminology" title="Terminology">
     <t>The following terminology is defined for this document.
     <list style="symbols">
-        <t>IPv6 CE Router: A router intended for home or small-office use that forwards packets explicitly
+        <t>IPv6 CE Router: A router intended for home or small-office use that forwards packets not explicitly
         addressed to itself as defined in <xref target='RFC7084'/>.</t>
         <t>Internet Service Provider (ISP): An entity that provides access to the Internet.  
         In this document, a service provider specifically offers Internet access using IPv6, and 
@@ -118,16 +119,18 @@
     <t>LAN Prefix Delegation (PD) Requirements</t>
         <t>LPD-1: The IPv6 CE Router MUST support DHCPv6 server capable of IPv6 prefix assignment 
         according to <xref target="RFC8415"/> (Idenity Association for Prefix Delegation (IA_PD) option).</t>
-        <t>LPD-2: The IPv6 CE Router MUST assign addresses from the delegated prefix to the number of interfaces. 
+        <t>LPD-2: The IPv6 CE Router MUST assign addresses from the delegated prefix to the number of links. 
         If not enough addresses are available the IPv6 CE Router SHOULD log a system management error.</t>
-        <t>LPD-3: After interface address assignment the IPv6 CE Router MUST make the remaining IPv6 prefixes
+        <t>LPD-3: The assigned addresses to a link do not change in the absence of topology or 
+        configuration changes.</t>
+        <t>LPD-4: After interface address assignment the IPv6 CE Router MUST make the remaining IPv6 prefixes
         available to other Routers via Prefix Delegation</t>
-        <t>LPD-4: The IPv6 CE Router MUST give out a IA_PD of the remaining prefixes with a IA_PD size of 64.</t>
-        <t>LPD-5: The IPv6 CE Router MUST install a route to the IA_PD assigned with a next-hop of the IPv6 node 
-        assigned the address.</t>
-        <t>LPD-6: If a IPv6 CE Router recieves IPv6 prefixes of size 64 it MUST enable delegating relay according 
-        to <xref target="RFC8987"/>. The MUST forward all the DHCPv6 Relay messages to the 
-        All_DHCP_Relay_Agents_and_Servers multicast address.</t>
+        <t>LPD-5: The IPv6 CE Router MUST give out a IA_PD of the remaining prefixes with a IA_PD size of 64.</t>
+        <t>LPD-6: The IPv6 CE Router MUST install a route to the IA_PD assigned with a next-hop of the IPv6 node 
+        assigned the address.  The IPv6 CE Router MUST remove a route when IA_PD lease expires as well.</t>
+        <t>LPD-7: The IPv6 CE Router firewall MUST allow traffic for Delegated Prefixes thru from WAN to LAN. </t>
+        <t>LPD-8: If a IPv6 CE Router recieves IPv6 prefixes of size 64 it MUST enable delegating relay according 
+        to <xref target="RFC8987"/> and the following requirements G-2 to G-7, G-9 and S-2. </t>
     </section>
     <section anchor="Security" title="Security Considerations">
         <t>This document does not add any new security considerations beyond those mentioned in 
@@ -137,9 +140,9 @@
          <t> This document makes no request of IANA.</t>
     </section>
     <section anchor="Acknowledgements" title="Acknowledements">
-    <t> Thanks to the following people (in alphabetical order) for their guidance and feedback:
+    <t> Thanks to the following people for their guidance and feedback:
     
-    Marion Dillon, Esko Dijk, Ted Lemon, Michael Richardson.
+    Marion Dillon, Erik Auerswald, Esko Dijk, Ted Lemon, Michael Richardson, Martin Hunek.
 
     </t> 
     </section>
@@ -153,6 +156,9 @@
      <?rfc include='reference.RFC.8213.xml'?>
      <?rfc include='reference.RFC.8415.xml'?>
      <?rfc include='reference.RFC.8987.xml'?>
+ </references>
+ <references title="Informative References">
+    <?rfc include='reference.RFC.7695.xml'?>
  </references>
 </back>
 </rfc>
