@@ -7,7 +7,7 @@
 <?rfc compact="yes"?>
 <?rfc comments="yes"?>
 <?rfc inline="yes"?>
-<rfc category="info" ipr="trust200902" updates="7084" docName="draft-winters-v6ops-cpe-lan-pd-04">
+<rfc category="info" ipr="trust200902" docName="draft-winters-v6ops-cpe-lan-pd-05">
   <front>
     <title>IPv6 CE Routers LAN Prefix Delegation</title>
 
@@ -50,19 +50,23 @@
     the usefulness of assigning prefixes larger than /64.  Supporting IA_PD on the LAN interfaces will allow
     for those unused prefixes to be distributed into a network.</t>  
 
-    <t>Two models, hierachical prefix and flat, have been proposed in the past for prefix sub-delegation.
-    Hierachical prefix delegation requires a IPv6 CE Router to sub delegate IPv6 prefixes based on set of rules.  
-    If more then one router uses hierachical prefix delegation, a IPv6 prefix tree is created.  
+    <t>Two models, hierarchical prefix and flat, have been proposed in the past for prefix sub-delegation beyond 
+    the IPv6 CE Router. Hierarchical prefix delegation requires an IPv6 CE Router to sub delegate IPv6 prefixes based on set of rules.  
+    If more then one router uses hierarchical prefix delegation, a IPv6 prefix tree is created.  
     When no routing protocol is present to discover the network topology it's possible to have unbalanced 
-    prefix delegation tree which leads to running out of prefixes. For more information on heirachical prefix 
-    delegation is contained in Section 8.5 of CableLabs IPv6 eRouter Specifiction. A flat prefix delegation 
-    requires the router provisioned with a the initial prefix then assign /64 prefixes to all other prefix request 
-    from routers downstream.</t>  
+    prefix delegation tree which leads to running out of prefixes.  For more information on heirachical prefix 
+    delegation is contained in Section 8.5 of CableLabs IPv6 eRouter Specifiction <xref target="eRouter"></xref>. 
+    A flat prefix delegation requires the router provisioned with the initial prefix then assign /64 prefixes to all other prefix request 
+    from routers downstream.  This is the default configuration is designed to be the flat model to support zero
+    configuration networking.</t>  
 
+    <t>The Home Networking working group producted solutions for prefix delegation for home networks, including
+    <xref target="RFC7695"/>.  The Home Networking solutions haven't been deployed by ISPs or IPv6 CE Routers since the publication
+    partially due to their complexity.</t>
     
     <t>This document does not cover dealing with 
-    multi-provisioned networks with more than one provider.  Due to complexity of a solution that will 
-    requires routing, provisioning, and policy this is out of scope of this document.</t>
+    multi-provisioned networks with more than one provider. Due to complexity of a solution that will 
+    require routing, provisioning, and policy this is out of scope of this document.</t>
     </section>
 
     <section anchor="Requirements Language" title="Requirements Language">
@@ -95,8 +99,11 @@
     </list>
     </t>
     </section> 
-    <section anchor="Architecture" title="Architecture">
-             <figure>
+    <section title="IPv6 End-User Network Architecture">
+    <t>The end-user network that has IPv6 Customer Edge Routers with routers and hosts downstream.  Figure 1
+    illustrates the model topology.</t>
+    
+    <figure align="center" title="Example IPv6 End User Topology">
                  <artwork>
                      +-----------+
                      |  Service  |
@@ -123,44 +130,31 @@
                 |        |   |            |
                 +--------+   +------------+
                  </artwork>
-            </figure>
+    </figure>
     </section>
     <section anchor="Requirements" title="Requirements">
     <t> The IPv6 CE Router distributes configuration information obtained during WAN interface
     provisioning to IPv6 hosts and routers.  Previously, a router based on <xref target="RFC7084"/> 
     would only provide IPv6 hosts with individual addresses; this update allows for addressing and routing of IPv6 
     prefixes to both hosts and routers.</t>
-
-    <t>LAN Prefix Delegation (LPD) Requirements</t>
-        <t>LPD-1: The IPv6 CE Router MUST support a DHCPv6 server capable of IPv6 prefix assignment 
-        according to <xref target="RFC8415"/> (Identity Association for Prefix Delegation (IA_PD) option).</t>
-        <t>LPD-2: The IPv6 CE Router MUST assign a prefix from the delegated prefix to each of its LAN links. 
-        If not enough addresses are available the IPv6 CE Router SHOULD log a system management error.</t>
-        <t>LPD-3: The prefix assigned to a link MUST NOT change in the absence of topology or 
-        configuration changes.</t>
-        <t>LPD-4: After LAN link prefix assignment the IPv6 CE Router MUST make the remaining IPv6 prefixes
-        available to other routers via Prefix Delegation.</t>
-        <t>LPD-5: The IPv6 CE Router MUST support either heirachical prefix delegation or flat prefix delegation.</t>
-    <t>LAN Hierachical Prefix Deletation (HPD) Requirements</t>
-        <t>HPD-1: If the provisioned IA_PD is smaller than a /56 (e.g., a /60) the IPv6 CE Router MUST divide the 
-        delegated prefix on three 3-bit boundaries into eight sub-prefixes by default.</t> 
-        <t>HPD-2: If the provisioned IA_PD is a /56 or larger the IPv6 CE Router MUST divide 
-        the delegated prefix on four (4)-bit boundaries into 16 sub-prefixes by default.</t>
-        <t>HPD-3: If the provisioned IA_PD is too small to divide in the manner described, the IPv6 CE Router 
-        MUST divide the delegated prefix into as many /64 sub-prefixes as possible and log an error message 
-        indicating the fault.</t>
-    <t>LAN Flat Prefix Delegation (FPD) Requirements</t>
-        <t>FPD-2: Available prefixes MUST be provisioned as IA_PD IA prefixes MUST with a prefix-length of 64.</t>
-        <t>FPD-3: The IPv6 CE Router MUST install a route to the assigned IA_PD with a next-hop of the IPv6 node that 
-        was assigned the prefix.  The IPv6 CE Router MUST remove the route when IA_PD lease expires.</t>
-        <t>FPD-4: By default, the IPv6 CE Router firewall MUST allow forwarding of packets with an outer IPv6 header containing
-        a source address belonging to Delegated Prefixes, along with reciprocal packets from the same flow, 
-        following the recommendations of <xref target="RFC6092"/></t>
-        <t>FPD-5: If an IPv6 CE Router receives a single IA_PD IA Prefix with a prefix-length of 64, it 
-        MUST act as delegating relay according to <xref target="RFC8987"/>, specifically requirements G-2 to G-7, G-9, and S-2. 
-        DHCPv6 messages without IA-PD option MUST NOT be relayed.</t>
-        <t>FPD-6: A CE Router MUST only be a delegating relay with DHCPv6 messages with IA_PD options present.</t>
-        <t>FPD-7: A CE Router assigning prefixes MUST NOT assign IA_NA in the same DHCPv6 exchange.</t>
+       <section title="LAN Prefix Delegation Requirements">
+        <t><list style="format LPD-%d:">
+           <t>The IPv6 CE Router MUST support a DHCPv6 server capable of IPv6 prefix assignment 
+           according to <xref target="RFC8415"/> (Identity Association for Prefix Delegation (IA_PD) option).</t>
+           <t>The IPv6 CE Router MUST assign a prefix from the delegated prefix to each of its LAN links. If not 
+           enough addresses are available the IPv6 CE Router SHOULD log a system management error.</t>
+           <t>The prefix assigned to a link MUST NOT change in the absence of topology or 
+           configuration changes.</t>
+           <t>After LAN link prefix assignment the IPv6 CE Router MUST make the remaining IPv6 prefixes
+           available to other routers via Prefix Delegation.</t>
+           <t>The IPv6 CE Router MUST install a route to the assigned IA_PD with a next-hop of the IPv6 node that 
+           was assigned the prefix.  The IPv6 CE Router MUST remove the route when IA_PD lease expires.</t>
+           <t>By default, the IPv6 CE Router firewall MUST allow forwarding of packets with an outer IPv6 header containing
+           a source address belonging to Delegated Prefixes, along with reciprocal packets from the same flow, 
+           following the recommendations of <xref target="RFC6092"/></t>
+           <t>The IPv6 CE Router SHOULD by default provision IA_PD IA prefixes with a prefix-length of 64.</t>
+        </list></t>
+       </section>
     </section>
     <section anchor="Security" title="Security Considerations">
         <t>This document does not add any new security considerations beyond those mentioned in 
@@ -173,7 +167,7 @@
     <t> Thanks to the following people for their guidance and feedback:
     
     Marion Dillon, Erik Auerswald, Esko Dijk, Tim Carlin, Richard Patterson, Ted Lemon, 
-    Michael Richardson, Martin Hunek.
+    Michael Richardson, Martin Huneki, Gabor Lencse, Ole Troan.
 
     </t> 
     </section>
@@ -187,10 +181,20 @@
      <?rfc include='reference.RFC.8174.xml'?>
      <?rfc include='reference.RFC.8213.xml'?>
      <?rfc include='reference.RFC.8415.xml'?>
-     <?rfc include='reference.RFC.8987.xml'?>
  </references>
  <references title="Informative References">
     <?rfc include='reference.RFC.7695.xml'?>
+    <reference anchor="eRouter" target="https://www.cablelabs.com/specifications/CM-SP-eRouter">
+    <front>
+      <title>IPv4 and IPv6 eRouter Specification Version I21</title>
+
+          <author fullname="CableLabs" surname="CableLabs">
+            <organization></organization>
+          </author>
+
+          <date month="February" year="2022" />
+        </front>
+      </reference>
  </references>
 </back>
 </rfc>
