@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<?rfc toc="yes"?>
+<?rfc sortrefs="no"?>
+<?rfc symrefs="yes"?>
+<?rfc compact="yes"?>
+<?rfc comments="yes"?>
+<?rfc inline="yes"?>
+<rfc category="info" ipr="trust200902" docName="draft-ietf-v6ops-cpe-lan-pd-00">
+  <front>
+    <title>IPv6 CE Routers LAN Prefix Delegation</title>
+
+    <author fullname="Timothy Winters" initials="T." surname="Winters">
+      <organization abbrev="QA Cafe">QA Cafe</organization>
+      <address>
+        <postal>
+          <street>100 Main Street, Suite #212</street>
+          <city>Dover</city>
+          <region>NH</region>
+          <code>03820</code>
+          <country>United States of America</country>
+        </postal>
+        <email>tim@qacafe.com</email>
+      </address>
+    </author>
+
+
+    <date year="2024" />
+    <area> Internet </area>
+    <workgroup>Internet Engineering Task Force</workgroup>
+    <keyword>IPv6</keyword>
+    <keyword>Internet Protocol Version 6</keyword>
+    <keyword>DHCPv6</keyword>
+
+  <abstract>
+    <t>This document defines requirements for IPv6 CE Routers to support DHCPv6 Prefix Delegation 
+    for redistributing any unused prefix(es) that were delegated to the IPv6 CE Router.  
+    This document updates RFC 7084.</t>
+
+  </abstract>
+
+</front>
+<middle>
+    <section title="Introduction">
+    <t>This document defines DHCPv6 Prefix Delegation in IPv6 CE Routers (<xref target="RFC7084" />) 
+    in order to properly utilize the IPv6 prefixes assigned by service providers.  Many ISP will assign 
+    a prefix larger then /64 to the CE Router, as recommended in <xref target="RFC6177" />. If an IPv6 CE 
+    Router doesn't support IA_PD on the LAN it will not be able to assign any prefixes beyond it's local interfaces. 
+    Limiting the usefulness of assigning prefixes larger than /64 by the operator.  Supporting IA_PD on the LAN interfaces will allow
+    for those unused prefixes to be distributed into a network.  Work is being done in the areas such as 
+    Stub Networking Auto Configuration (SNAC) working group that depends on IPv6 addresses being properly distibuted.</t>  
+
+    <t>Two models, hierarchical prefix and flat, have been proposed in the past for prefix sub-delegation beyond 
+    the IPv6 CE Router. Hierarchical prefix delegation requires an IPv6 CE Router to sub delegate IPv6 prefixes based on set of rules.  
+    If more then one router uses hierarchical prefix delegation, a IPv6 prefix tree is created.  
+    When no routing protocol is present to discover the network topology it's possible to have unbalanced 
+    prefix delegation tree which leads to running out of prefixes.  For more information on heirachical prefix 
+    delegation is contained in Section 8.5 of CableLabs IPv6 eRouter Specifiction <xref target="eRouter"></xref>. 
+    A flat prefix delegation requires the router provisioned with the initial prefix then assign /64 prefixes to all other prefix request 
+    from routers downstream.  This is the default configuration is designed to be the flat model to support zero
+    configuration networking.</t>  
+
+    <t>The Home Networking working group producted solutions for prefix delegation for home networks, including
+    <xref target="RFC7695"/>.  The Home Networking solutions haven't been deployed by ISPs or IPv6 CE Routers since the publication
+    partially due to their complexity.</t>
+    
+    <t>This document does not cover dealing with 
+    multi-provisioned networks with more than one provider. Due to complexity of a solution that will 
+    require routing, provisioning, and policy this is out of scope of this document.</t>
+    </section>
+
+    <section anchor="Requirements Language" title="Requirements Language">
+
+      <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL",
+      "SHALL&nbsp;NOT", "SHOULD", "SHOULD&nbsp;NOT", "RECOMMENDED",
+      "NOT&nbsp;RECOMMENDED", "MAY", and "OPTIONAL" in this document
+      are to be interpreted as described in BCP&nbsp;14
+      <xref target="RFC2119"/> <xref target="RFC8174"/> when,
+      and only when, they appear in all capitals, as shown here.</t>
+
+      <t>This document also makes use of internal conceptual variables to
+      describe protocol behavior and external variables that an implementation
+      must allow system administrators to change. The specific variable names,
+      how their values change, and how their settings influence protocol
+      behavior are provided to demonstrate protocol behavior. An
+      implementation is not required to have them in the exact form described
+      here, as long as its external behavior is consistent with that described
+      in this document.</t>
+    </section>
+    <section anchor="Terminology" title="Terminology">
+    <t>The following terminology is defined for this document.
+    <list style="symbols">
+        <t>IPv6 CE Router: A router intended for home or small-office use that forwards packets not explicitly
+        addressed to itself as defined in <xref target='RFC7084'/>.</t>
+        <t>Internet Service Provider (ISP): An entity that provides access to the Internet.  
+        In this document, a service provider specifically offers Internet access using IPv6, and 
+        may also offer IPv4 Internet access.  The service provider can provide such access over a 
+        variety of different transport methods such as DSL, cable, wireless, and others.</t>
+    </list>
+    </t>
+    </section> 
+    <section title="IPv6 End-User Network Architecture">
+    <t>The end-user network that has IPv6 Customer Edge Routers with routers and hosts downstream.  Figure 1
+    illustrates the model topology.</t>
+    
+    <figure align="center" title="Example IPv6 End User Topology">
+                 <artwork>
+                     +-----------+
+                     |  Service  |
+                     |  Provider |
+                     |   Router  |
+                     +-----+-----+
+                           |
+                           |
+                           |  Customer
+                           |  Internet Connection
+                           |
+                     +-----v-----+
+                     |   IPv6    |
+                     |    CE     |
+                     |  Router   |
+                     +-----+-----+
+                           |
+                    +----+-+-------+
+                    |              |
+                    |              |
+                +---+----+   +-----+------+
+                |  IPv6  |   |            |
+                |  Host  |   |  Router    |
+                |        |   |            |
+                +--------+   +------------+
+                 </artwork>
+    </figure>
+    </section>
+    <section anchor="Requirements" title="Requirements">
+    <t> The IPv6 CE Router distributes configuration information obtained during WAN interface
+    provisioning to IPv6 hosts and routers.  Previously, a router based on <xref target="RFC7084"/> 
+    would only provide IPv6 hosts with individual addresses; this update allows for addressing and routing of IPv6 
+    prefixes to both hosts and routers.</t>
+       <section title="LAN Prefix Delegation Requirements">
+        <t><list style="format LPD-%d:">
+           <t>The IPv6 CE Router MUST support a DHCPv6 server capable of IPv6 prefix assignment 
+           according to <xref target="RFC8415"/> (Identity Association for Prefix Delegation (IA_PD) option).</t>
+           <t>The IPv6 CE Router MUST assign a prefix from the delegated prefix to each of its LAN links. If not 
+           enough addresses are available the IPv6 CE Router SHOULD log a system management error.</t>
+           <t>The prefix assigned to a link MUST NOT change in the absence of topology or 
+           configuration changes.</t>
+           <t>After LAN link prefix assignment the IPv6 CE Router MUST make the remaining IPv6 prefixes
+           available to other routers via Prefix Delegation.</t>
+           <t>The IPv6 CE Router MUST install a route to the assigned IA_PD with a next-hop of the IPv6 node that 
+           was assigned the prefix.  The IPv6 CE Router MUST remove the route when IA_PD lease expires.</t>
+           <t>By default, the IPv6 CE Router firewall MUST allow forwarding of packets with an outer IPv6 header containing
+           a source address belonging to Delegated Prefixes, along with reciprocal packets from the same flow, 
+           following the recommendations of <xref target="RFC6092"/></t>
+           <t>The IPv6 CE Router SHOULD by default provision IA_PD IA prefixes with a prefix-length of 64.</t>
+        </list></t>
+       </section>
+    </section>
+    <section anchor="Security" title="Security Considerations">
+        <t>This document does not add any new security considerations beyond those mentioned in 
+        Section 4 of <xref target="RFC8213"/> and Section 22 of <xref target="RFC8415"/>.</t>
+    </section>
+    <section anchor="IANA" title="IANA Considerations">
+         <t> This document makes no request of IANA.</t>
+    </section>
+    <section anchor="Acknowledgements" title="Acknowledgements">
+    <t> Thanks to the following people for their guidance and feedback:
+    
+    Marion Dillon, Erik Auerswald, Esko Dijk, Tim Carlin, Richard Patterson, Ted Lemon, 
+    Michael Richardson, Martin Huneki, Gabor Lencse, Ole Troan.
+
+    </t> 
+    </section>
+</middle>
+<back>
+ <references title="Normative References">
+     <?rfc include='reference.RFC.2119.xml'?>
+     <?rfc include='reference.RFC.6092.xml'?>
+     <?rfc include='reference.RFC.6177.xml'?>
+     <?rfc include='reference.RFC.7084.xml'?>
+     <?rfc include='reference.RFC.8174.xml'?>
+     <?rfc include='reference.RFC.8213.xml'?>
+     <?rfc include='reference.RFC.8415.xml'?>
+ </references>
+ <references title="Informative References">
+    <?rfc include='reference.RFC.7695.xml'?>
+    <reference anchor="eRouter" target="https://www.cablelabs.com/specifications/CM-SP-eRouter">
+    <front>
+      <title>IPv4 and IPv6 eRouter Specification Version I21</title>
+
+          <author fullname="CableLabs" surname="CableLabs">
+            <organization></organization>
+          </author>
+
+          <date month="February" year="2022" />
+        </front>
+      </reference>
+ </references>
+</back>
+</rfc>
