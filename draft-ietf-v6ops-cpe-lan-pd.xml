@@ -7,7 +7,7 @@
 <?rfc compact="yes"?>
 <?rfc comments="yes"?>
 <?rfc inline="yes"?>
-<rfc category="info" ipr="trust200902" docName="draft-ietf-v6ops-cpe-lan-pd-00">
+<rfc category="info" ipr="trust200902" updates="7084" docName="draft-ietf-v6ops-cpe-lan-pd-03">
   <front>
     <title>IPv6 CE Routers LAN Prefix Delegation</title>
 
@@ -24,8 +24,6 @@
         <email>tim@qacafe.com</email>
       </address>
     </author>
-
-
     <date year="2024" />
     <area> Internet </area>
     <workgroup>Internet Engineering Task Force</workgroup>
@@ -44,30 +42,30 @@
 <middle>
     <section title="Introduction">
     <t>This document defines DHCPv6 Prefix Delegation in IPv6 CE Routers (<xref target="RFC7084" />) 
-    in order to properly utilize the IPv6 prefixes assigned by service providers.  Many ISP will assign 
+    in order to properly utilize the IPv6 prefixes assigned by service providers.  Many ISPs will assign 
     a prefix larger then /64 to the CE Router, as recommended in <xref target="RFC6177" />. If an IPv6 CE 
-    Router doesn't support IA_PD on the LAN it will not be able to assign any prefixes beyond it's local interfaces. 
-    Limiting the usefulness of assigning prefixes larger than /64 by the operator.  Supporting IA_PD on the LAN interfaces will allow
-    for those unused prefixes to be distributed into a network.  Work is being done in the areas such as 
-    Stub Networking Auto Configuration (SNAC) working group that depends on IPv6 addresses being properly distibuted.</t>  
+    Router does not support IA_PD on the LAN it will not be able to assign any prefixes beyond its local 
+    interfaces, limiting the usefulness of assigning prefixes larger than /64 by the operator.  Supporting 
+    IA_PD on the LAN interfaces will allow those unused prefixes to be distributed into a network.  Work 
+    is being done in the areas such as Stub Networking Auto Configuration (SNAC) working group that 
+    depends on IPv6 addresses being properly distibuted.</t>  
 
     <t>Two models, hierarchical prefix and flat, have been proposed in the past for prefix sub-delegation beyond 
-    the IPv6 CE Router. Hierarchical prefix delegation requires an IPv6 CE Router to sub delegate IPv6 prefixes based on set of rules.  
-    If more then one router uses hierarchical prefix delegation, a IPv6 prefix tree is created.  
-    When no routing protocol is present to discover the network topology it's possible to have unbalanced 
+    the IPv6 CE Router. Hierarchical prefix delegation requires an IPv6 CE Router to sub delegate IPv6 prefixes 
+    based on set of rules. If more then one router uses hierarchical prefix delegation, a IPv6 prefix tree is created.  
+    When no routing protocol is present to discover the network topology, it's possible to have unbalanced 
     prefix delegation tree which leads to running out of prefixes.  For more information on heirachical prefix 
     delegation is contained in Section 8.5 of CableLabs IPv6 eRouter Specifiction <xref target="eRouter"></xref>. 
-    A flat prefix delegation requires the router provisioned with the initial prefix then assign /64 prefixes to all other prefix request 
-    from routers downstream.  This is the default configuration is designed to be the flat model to support zero
-    configuration networking.</t>  
+    A flat prefix delegation requires the router to be provisioned with the initial prefix and to assign /64 prefixes 
+    to all other prefix requests from routers downstream. As the default configuration is designed to be the 
+    flat model to support zero configuration networking.</t>  
 
     <t>The Home Networking working group producted solutions for prefix delegation for home networks, including
     <xref target="RFC7695"/>.  The Home Networking solutions haven't been deployed by ISPs or IPv6 CE Routers since the publication
     partially due to their complexity.</t>
     
-    <t>This document does not cover dealing with 
-    multi-provisioned networks with more than one provider. Due to complexity of a solution that will 
-    require routing, provisioning, and policy this is out of scope of this document.</t>
+    <t>This document does not cover dealing with multi-provisioned networks with more than one provider. 
+    Due to complexity of a solution that would require routing, provisioning and policy, this is out of scope of this document.</t>
     </section>
 
     <section anchor="Requirements Language" title="Requirements Language">
@@ -142,8 +140,8 @@
         <t><list style="format LPD-%d:">
            <t>The IPv6 CE Router MUST support a DHCPv6 server capable of IPv6 prefix assignment 
            according to <xref target="RFC8415"/> (Identity Association for Prefix Delegation (IA_PD) option).</t>
-           <t>The IPv6 CE Router MUST assign a prefix from the delegated prefix to each of its LAN links. If not 
-           enough addresses are available the IPv6 CE Router SHOULD log a system management error.</t>
+           <t>The IPv6 CE Router MUST assign a prefix from the delegated prefix as specified by L-2 <xref target="RFC7084>. 
+           If not enough addresses are available the IPv6 CE Router SHOULD log a system management error.</t>
            <t>The prefix assigned to a link MUST NOT change in the absence of topology or 
            configuration changes.</t>
            <t>After LAN link prefix assignment the IPv6 CE Router MUST make the remaining IPv6 prefixes
@@ -152,7 +150,7 @@
            was assigned the prefix.  The IPv6 CE Router MUST remove the route when IA_PD lease expires.</t>
            <t>By default, the IPv6 CE Router firewall MUST allow forwarding of packets with an outer IPv6 header containing
            a source address belonging to Delegated Prefixes, along with reciprocal packets from the same flow, 
-           following the recommendations of <xref target="RFC6092"/></t>
+           following the recommendations of <xref target="RFC6092"/> </t>
            <t>The IPv6 CE Router SHOULD by default provision IA_PD IA prefixes with a prefix-length of 64.</t>
         </list></t>
        </section>
@@ -168,7 +166,7 @@
     <t> Thanks to the following people for their guidance and feedback:
     
     Marion Dillon, Erik Auerswald, Esko Dijk, Tim Carlin, Richard Patterson, Ted Lemon, 
-    Michael Richardson, Martin Huneki, Gabor Lencse, Ole Troan.
+    Michael Richardson, Martin Huneki, Gabor Lencse, Ole Troan, Brian Carpenter.
 
     </t> 
     </section>
@@ -176,6 +174,7 @@
 <back>
  <references title="Normative References">
      <?rfc include='reference.RFC.2119.xml'?>
+     <?rfc include='reference.RFC.4861.xml'?>
      <?rfc include='reference.RFC.6092.xml'?>
      <?rfc include='reference.RFC.6177.xml'?>
      <?rfc include='reference.RFC.7084.xml'?>
