@@ -7,7 +7,7 @@
 <?rfc compact="yes"?>
 <?rfc comments="yes"?>
 <?rfc inline="yes"?>
-<rfc category="info" ipr="trust200902" updates="7084" docName="draft-ietf-v6ops-cpe-lan-pd-03">
+<rfc category="info" ipr="trust200902" updates="7084" docName="draft-ietf-v6ops-cpe-lan-pd-05">
   <front>
     <title>IPv6 CE Routers LAN Prefix Delegation</title>
 
@@ -48,7 +48,7 @@
     interfaces, limiting the usefulness of assigning prefixes larger than /64 by the operator.  Supporting 
     IA_PD on the LAN interfaces will allow those unused prefixes to be distributed into a network.  Work 
     is being done in the areas such as Stub Networking Auto Configuration (SNAC) working group that 
-    depends on IPv6 addresses being properly distibuted.</t>  
+    depends on IPv6 prefixes being properly distibuted.</t>  
 
     <t>Two models, hierarchical prefix and flat, have been proposed in the past for prefix sub-delegation beyond 
     the IPv6 CE Router. Hierarchical prefix delegation requires an IPv6 CE Router to sub delegate IPv6 prefixes 
@@ -140,7 +140,7 @@
         <t><list style="format LPD-%d:">
            <t>The IPv6 CE Router MUST support a DHCPv6 server capable of IPv6 prefix assignment 
            according to <xref target="RFC8415"/> (Identity Association for Prefix Delegation (IA_PD) option).</t>
-           <t>The IPv6 CE Router MUST assign a prefix from the delegated prefix as specified by L-2 <xref target="RFC7084>. 
+           <t>The IPv6 CE Router MUST assign a prefix from the delegated prefix as specified by L-2 <xref target="RFC7084"/>. 
            If not enough addresses are available the IPv6 CE Router SHOULD log a system management error.</t>
            <t>The prefix assigned to a link MUST NOT change in the absence of topology or 
            configuration changes.</t>
@@ -150,8 +150,15 @@
            was assigned the prefix.  The IPv6 CE Router MUST remove the route when IA_PD lease expires.</t>
            <t>By default, the IPv6 CE Router firewall MUST allow forwarding of packets with an outer IPv6 header containing
            a source address belonging to Delegated Prefixes, along with reciprocal packets from the same flow, 
-           following the recommendations of <xref target="RFC6092"/> </t>
-           <t>The IPv6 CE Router SHOULD by default provision IA_PD IA prefixes with a prefix-length of 64.</t>
+           following the recommendations of <xref target="RFC6092"/>. This updates WPD-5 of 
+           <xref target="RFC7084"/> to not drop packets from prefixes that have been delegated.</t>
+           <t>The IPv6 CE Router MUST provision IA_PD prefixes with a prefix-length of 64 unless configured to 
+           different prefix-length by the user. The prefix length of 64 is used as that is the current prefix length supported by SLAAC.</t>
+           <t>If the CE Router is configured to generate a ULA prefix as defined in ULA-1 of <xref target="RFC7084"/> after 
+           LAN link prefix assignment of the ULA prefixes the IPv6 CE Router MUST make the remaining IPv6 prefixes available 
+           to other routers via Prefix Delegation.</t>
+           <t>IPv6 CE Router MUST NOT delegate prefixes via DHCPv6 on the LAN using lifetimes that
+           exceed the remaining lifetimes of the corresponding prefixes learned on the WAN via DHCPv6-PD.</t>  
         </list></t>
        </section>
     </section>
@@ -166,7 +173,8 @@
     <t> Thanks to the following people for their guidance and feedback:
     
     Marion Dillon, Erik Auerswald, Esko Dijk, Tim Carlin, Richard Patterson, Ted Lemon, 
-    Michael Richardson, Martin Huneki, Gabor Lencse, Ole Troan, Brian Carpenter.
+    Michael Richardson, Martin Huneki, Gabor Lencse, Ole Troan, Brian Carpenter, David Farmer,
+    Tim Chown.
 
     </t> 
     </section>
@@ -174,7 +182,6 @@
 <back>
  <references title="Normative References">
      <?rfc include='reference.RFC.2119.xml'?>
-     <?rfc include='reference.RFC.4861.xml'?>
      <?rfc include='reference.RFC.6092.xml'?>
      <?rfc include='reference.RFC.6177.xml'?>
      <?rfc include='reference.RFC.7084.xml'?>
