@@ -119,11 +119,11 @@
                     +------+-------+
                     |              |
                     |              |
-                +---+----+   +-----+------+
-                |  IPv6  |   |            |
-                |  Host  |   |  Router    |
-                |        |   |            |
-                +--------+   +------+-----+
+                +---+----+   +-----+-----+
+                |  IPv6  |   |           |
+                |  Host  |   |   Router  |
+                |        |   |           |
+                +--------+   +-----+-----+
                                     |
                                     |
                                 +---+----+
@@ -137,19 +137,19 @@
     <section anchor="Requirements" title="Requirements">
     <t> IPv6 CE routers distribute configuration information obtained during WAN interface
     provisioning to LAN-facing IPv6 hosts and routers.  An <xref target="RFC7084"/> compliant CE router  
-    would only provide IPv6 hosts with configuration information. This allows for addressing and routing of IPv6 
+    would only provide IPv6 hosts with configuration information. This document allows for addressing and routing of IPv6 
     prefixes to both hosts and routers. These requirements are in addition to the ones in Section 4.3 of 
     <xref target="RFC7084"/>.</t>
        <section title="LAN Prefix Delegation Requirements (LPD)">
         <t><list style="format LPD-%d:">
            <t>IPv6 CE routers MUST support IPv6 prefix assignment according to Section 13.3 of <xref target="RFC8415"/> 
-           (Identity Association for Prefix Delegation (IA_PD) option) on its LAN interface.</t>
+           (Identity Association for Prefix Delegation (IA_PD) option) on its LAN interface(s).</t>
            <t>IPv6 CE routers MUST assign a prefix from the delegated prefix as specified by L-2 in 
            Section 4.3 of <xref target="RFC7084"/>. 
            If insufficient prefixes are available the IPv6 CE Router MUST log a system management error.</t>
            <t>The prefix assigned to a link MUST NOT change in the absence of a local policy or a 
            topology change.</t>
-           <t>After LAN link prefix assignments, the IPv6 CE router MUST make the remaining IPv6 prefixes
+           <t>After LAN link prefix assignments, the IPv6 CE router MUST keep the remaining IPv6 prefixes
            available to other routers via Prefix Delegation.</t>
            <t>IPv6 CE routers MUST maintain a local routing table that is dynamically updated with leases 
            and the associated next hops as they are delegated to clients. When a delegated prefix is released 
@@ -163,11 +163,11 @@
            MUST continue to drop packets including destination address that is not assigned to the LAN or delegated.</t>
            <t>The IPv6 CE routers MUST provision IA_PD prefixes with a prefix-length of 64 on the LAN-facing interface 
            unless configured to use a different prefix-length by the CE Router administrator. The prefix 
-           length of 64 is used as that is the current prefix length supported by SLAAC. For hierarchical 
+           length of 64 is used as that is the current prefix length supported by SLAAC <xref target="RFC4862"/>. For hierarchical 
            prefix delegation a prefix-length shorter than 64 may be configured.</t>
            <t>IPv6 CE routers configured to generate a ULA prefix as defined in ULA-1 of Section 4.3 of <xref target="RFC7084"/> 
            MUST continue to provision available GUA IPv6 prefixes.</t>
-           <t>If an IPv6 CE router is provisioning both ULA and GUA via prefix delegation, the GUA SHOULD appear first in the packet.</t>
+           <t>If an IPv6 CE router is provisioning both ULA and GUA via prefix delegation, the GUA SHOULD appear first in the DHCPv6 packets.</t>
            <t>IPv6 CE routers MUST NOT delegate prefixes via DHCPv6 on the LAN using lifetimes that
            exceed the remaining lifetimes of the corresponding prefixes learned on the WAN.</t>  
         </list></t>
@@ -201,6 +201,7 @@
      <?rfc include='reference.RFC.8415.xml'?>
  </references>
  <references title="Informative References">
+    <?rfc include='reference.RFC.4862.xml'?>
     <?rfc include='reference.RFC.6092.xml'?>
     <?rfc include='reference.RFC.6177.xml'?>
     <?rfc include='reference.RFC.8174.xml'?>
