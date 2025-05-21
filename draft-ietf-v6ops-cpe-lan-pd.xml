@@ -84,11 +84,11 @@
     <section anchor="Terminology" title="Terminology">
     <t>The following terminology is defined for this document.
     <list style="symbols">
-        <t>IPv6 node: a device that implements IPv6</t>
-        <t>IPv6 router: a node that forwards IPv6 packets not explicitly addressed to itself.</t>
-        <t>IPv6 host: Any IPv6 node that is not a router.</t>
-        <t>ULA:Unique Local Address as defined in <xref target='RFC4193'/>.</t>
-        <t>GUA:Global Unique Addresses as defined in <xref target='RFC4291'/>.</t>
+        <t>IPv6 node: A device that implements IPv6 protocol <xref target='RFC8200'/>.</t>
+        <t>IPv6 router: An IPv6 node that forwards IPv6 packets not explicitly addressed to itself.</t>
+        <t>IPv6 host: An IPv6 node that is not a router.</t>
+        <t>ULA:Unique Local Address, as defined in <xref target='RFC4193'/>.</t>
+        <t>GUA:Global Unique Addresses, as defined in <xref target='RFC4291'/>.</t>
     </list>
     </t>
     </section> 
@@ -186,6 +186,7 @@
      <?rfc include='reference.RFC.4193.xml'?>
      <?rfc include='reference.RFC.4291.xml'?>
      <?rfc include='reference.RFC.7084.xml'?>
+     <?rfc include='reference.RFC.8200.xml'?>
      <?rfc include='reference.RFC.8213.xml'?>
      <?rfc include='reference.RFC.8415.xml'?>
  </references>
