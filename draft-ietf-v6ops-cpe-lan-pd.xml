@@ -14,7 +14,7 @@
 <?rfc inline="yes"?>
 <rfc category="info" ipr="trust200902" updates="7084" docName="draft-ietf-v6ops-cpe-lan-pd-07" submissionType="IETF">
   <front>
-    <title>IPv6 CE Routers LAN Prefix Delegation</title>
+    <title>IPv6 CE Routers LAN DHCPv6 Prefix Delegation</title>
 
     <author fullname="Timothy Winters" initials="T." surname="Winters">
       <organization abbrev="QA Cafe">QA Cafe</organization>
@@ -38,7 +38,7 @@
 
   <abstract>
     <t>This document defines requirements for IPv6 Customer Edge (CE) routers to 
-    support DHCPv6 Prefix Delegation for distributing unused prefixes that were 
+    support DHCPv6 Prefix Delegation for distributing available prefixes that were 
     delegated to a IPv6 CE router.  This document updates RFC 7084.</t>
 
   </abstract>
@@ -46,8 +46,8 @@
 </front>
 <middle>
     <section title="Introduction">
-    <t>This document defines requirements for DHCPv6 Prefix Delegation in IPv6 Customer Edge (CE) 
-    routers (<xref target="RFC7084" />) in order to properly utilize the IPv6 prefixes assigned by 
+    <t>This document describes guidelines for DHCPv6 Prefix Delegation in IPv6 Customer Edge (CE) 
+    routers (<xref target="RFC7084" />) in order to properly utilize the IPv6 prefixes delegated by 
     service providers. Many service providers assign larger address blocks than /64 to CE routers, 
     as recommended in <xref target="RFC6177" />. If an IPv6 CE router does not support the 
     Identity Association for Prefix Delegation (IA_PD) Prefix Option 
@@ -58,11 +58,14 @@
     (SNAC) Working Group depend on IPv6 prefixes being properly distributed in the LAN.</t>  
 
     <t>Two models, hierarchical prefix and flat, were proposed in the past for prefix sub-delegation beyond 
-    an IPv6 CE router. Hierarchical prefix delegation requires an IPv6 CE router to sub delegate IPv6 prefixes 
+    an IPv6 CE router. 
+    
+    Hierarchical prefix delegation requires an IPv6 CE router to sub delegate IPv6 prefixes 
     based on set of rules. If more than one router uses hierarchical prefix delegation, an IPv6 prefix tree is created.  
     When no routing protocol is enabled to discover the network topology, it is possible to have unbalanced 
-    prefix delegation tree which leads to running out of prefixes.  More information on heirarchical prefix 
+    prefix delegation tree which leads to running out of prefixes.  More information on hierarchical prefix 
     delegation can be found, e.g., in Section 8.5 of CableLabs IPv6 eRouter Specifiction <xref target="eRouter"></xref>. 
+
     A flat prefix delegation requires the router to be provisioned with the initial prefix and to assign /64 prefixes 
     to all other prefix requests from routers in the LAN-facing interface. The default configuration of CE Router 
     supporting prefix delegation is designed to be a flat model to support zero configuration networking.</t>  
@@ -120,7 +123,14 @@
                 |  IPv6  |   |            |
                 |  Host  |   |  Router    |
                 |        |   |            |
-                +--------+   +------------+
+                +--------+   +------+-----+
+                                    |
+                                    |
+                                +---+----+
+                                |  IPv6  |
+                                |  Host  |
+                                |        |
+                                +--------+  
                  </artwork>
     </figure>
     </section>
