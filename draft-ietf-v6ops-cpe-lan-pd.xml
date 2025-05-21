@@ -125,7 +125,7 @@
     </figure>
     </section>
     <section anchor="Requirements" title="Requirements">
-    <t> IPv6 CE router distribute configuration information obtained during WAN interface
+    <t> IPv6 CE routers distribute configuration information obtained during WAN interface
     provisioning to LAN-facing IPv6 hosts and routers.  An <xref target="RFC7084"/> compliant CE router  
     would only provide IPv6 hosts with configuration information. This allows for addressing and routing of IPv6 
     prefixes to both hosts and routers. These requirements are in addition to the ones in Section 4.3 of 
@@ -144,7 +144,8 @@
            <t>IPv6 CE routers MUST maintain a local routing table that is dynamically updated with leases 
            and the associated next hops as they are delegated to clients. When a delegated prefix is released 
            or expires, the associated route MUST be removed from the IPv6 CE router's routing table. A delegated 
-           prefix expires when the valid lifetime assigned in the IA_PD expires without being renewed, per <xref target="RFC8415"></xref></t>
+           prefix expires when the valid lifetime assigned in the IA_PD expires without being renewed. When a prefix
+           is released or expires it MUST be returned the pool of available prefixes.</t>
            <t>By default, the IPv6 CE router filtering rules MUST allow forwarding of packets with an outer 
            IPv6 header containing a source address belonging to Delegated Prefixes, along with reciprocal 
            packets from the same flow, following the recommendations of <xref target="RFC6092"/>. This updates WPD-5 of 
