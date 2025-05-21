@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="US-ASCII"?>
-<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+<!DOCTYPE rfc [
+  <!ENTITY nbsp    "&#160;">
+  <!ENTITY zwsp   "&#8203;">
+  <!ENTITY nbhy   "&#8209;">
+  <!ENTITY wj     "&#8288;">
+]>
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 <?rfc toc="yes"?>
 <?rfc sortrefs="no"?>
@@ -7,7 +12,7 @@
 <?rfc compact="yes"?>
 <?rfc comments="yes"?>
 <?rfc inline="yes"?>
-<rfc category="info" ipr="trust200902" updates="7084" docName="draft-ietf-v6ops-cpe-lan-pd-07">
+<rfc category="info" ipr="trust200902" updates="7084" docName="draft-ietf-v6ops-cpe-lan-pd-07" submissionType="IETF">
   <front>
     <title>IPv6 CE Routers LAN Prefix Delegation</title>
 
@@ -50,7 +55,7 @@
     interfaces, limiting the usefulness of assigning prefixes larger than /64 by the operator.  Supporting 
     IA_PD on the LAN interfaces of a CE Router will allow those unused prefixes to be distributed 
     into a network.  Note that efforts such as Stub Networking Auto Configuration 
-    (SNAC) Working Group that depends on IPv6 prefixes being properly distributed in the LAN.</t>  
+    (SNAC) Working Group depend on IPv6 prefixes being properly distributed in the LAN.</t>  
 
     <t>Two models, hierarchical prefix and flat, were proposed in the past for prefix sub-delegation beyond 
     an IPv6 CE router. Hierarchical prefix delegation requires an IPv6 CE router to sub delegate IPv6 prefixes 
@@ -127,27 +132,28 @@
     <xref target="RFC7084"/>.</t>
        <section title="LAN Prefix Delegation Requirements (LPD)">
         <t><list style="format LPD-%d:">
-           <t>IPv6 CE routers MUST support IPv6 prefix assignment according to <xref target="RFC8415"/> 
+           <t>IPv6 CE routers MUST support IPv6 prefix assignment according to Section 13.3 of <xref target="RFC8415"/> 
            (Identity Association for Prefix Delegation (IA_PD) option) on its LAN interface.</t>
            <t>IPv6 CE routers MUST assign a prefix from the delegated prefix as specified by L-2 in 
            Section 4.3 of <xref target="RFC7084"/>. 
-           If insufficient prefixes are available the IPv6 CE Router SHOULD log a system management error.</t>
+           If insufficient prefixes are available the IPv6 CE Router MUST log a system management error.</t>
            <t>The prefix assigned to a link MUST NOT change in the absence of a local policy or a 
            topology change.</t>
            <t>After LAN link prefix assignments, the IPv6 CE router MUST make the remaining IPv6 prefixes
            available to other routers via Prefix Delegation.</t>
            <t>IPv6 CE routers MUST maintain a local routing table that is dynamically updated with leases 
            and the associated next hops as they are delegated to clients. When a delegated prefix is released 
-           or expires, the associated route MUST be removed from the IPv6 CE router's routing table.</t>
+           or expires, the associated route MUST be removed from the IPv6 CE router's routing table. A delegated 
+           prefix expires when the valid lifetime assigned in the IA_PD expires without being renewed, per <xref target="RFC8415"></xref></t>
            <t>By default, the IPv6 CE router filtering rules MUST allow forwarding of packets with an outer 
            IPv6 header containing a source address belonging to Delegated Prefixes, along with reciprocal 
            packets from the same flow, following the recommendations of <xref target="RFC6092"/>. This updates WPD-5 of 
            <xref target="RFC7084"/> to not drop packets from prefixes that have been delegated. IPv6 CE routers
-           MUST continue to drop packets destination address that is not assigned to the LAN or delegated.</t>
+           MUST continue to drop packets including destination address that is not assigned to the LAN or delegated.</t>
            <t>The IPv6 CE routers MUST provision IA_PD prefixes with a prefix-length of 64 on the LAN-facing interface 
-           unless configured to use a different prefix-length or the CE Router administrator. The prefix 
+           unless configured to use a different prefix-length by the CE Router administrator. The prefix 
            length of 64 is used as that is the current prefix length supported by SLAAC. For hierarchical 
-           prefix delegation a prefix-length shorter then 64 may be configured.</t>
+           prefix delegation a prefix-length shorter than 64 may be configured.</t>
            <t>IPv6 CE routers configured to generate a ULA prefix as defined in ULA-1 of Section 4.3 of <xref target="RFC7084"/> 
            MUST continue to provision available GUA IPv6 prefixes.</t>
            <t>If an IPv6 CE router is provisioning both ULA and GUA via prefix delegation, the GUA SHOULD appear first in the packet.</t>
@@ -178,14 +184,14 @@
      <?rfc include='reference.RFC.2119.xml'?>
      <?rfc include='reference.RFC.4193.xml'?>
      <?rfc include='reference.RFC.4291.xml'?>
-     <?rfc include='reference.RFC.6092.xml'?>
-     <?rfc include='reference.RFC.6177.xml'?>
      <?rfc include='reference.RFC.7084.xml'?>
-     <?rfc include='reference.RFC.8174.xml'?>
      <?rfc include='reference.RFC.8213.xml'?>
      <?rfc include='reference.RFC.8415.xml'?>
  </references>
  <references title="Informative References">
+    <?rfc include='reference.RFC.6092.xml'?>
+    <?rfc include='reference.RFC.6177.xml'?>
+    <?rfc include='reference.RFC.8174.xml'?>
     <reference anchor="eRouter" target="https://www.cablelabs.com/specifications/CM-SP-eRouter">
     <front>
       <title>IPv4 and IPv6 eRouter Specification Version I21</title>
