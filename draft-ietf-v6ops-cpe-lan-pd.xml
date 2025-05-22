@@ -204,6 +204,7 @@
      <?rfc include='reference.RFC.4193.xml'?>
      <?rfc include='reference.RFC.4291.xml'?>
      <?rfc include='reference.RFC.7084.xml'?>
+     <?rfc include='reference.RFC.8174.xml'?>
      <?rfc include='reference.RFC.8200.xml'?>
      <?rfc include='reference.RFC.8213.xml'?>
      <?rfc include='reference.RFC.8415.xml'?>
@@ -212,7 +213,6 @@
     <?rfc include='reference.RFC.4862.xml'?>
     <?rfc include='reference.RFC.6092.xml'?>
     <?rfc include='reference.RFC.6177.xml'?>
-    <?rfc include='reference.RFC.8174.xml'?>
     <reference anchor="eRouter" target="https://www.cablelabs.com/specifications/CM-SP-eRouter">
     <front>
       <title>IPv4 and IPv6 eRouter Specification Version I21</title>
