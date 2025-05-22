@@ -93,9 +93,9 @@
 
     </section>
     <section anchor="Terminology" title="Terminology">
-    <t>The following terminology is defined for this document.
+    <t>The document makes use of the following terms from Section 2 <xref target='RFC8200'/>
     <list style="symbols">
-        <t>IPv6 node: A device that implements IPv6 protocol <xref target='RFC8200'/>.</t>
+        <t>IPv6 node: A device that implements IPv6 protocol.</t>
         <t>IPv6 router: An IPv6 node that forwards IPv6 packets not explicitly addressed to itself.</t>
         <t>IPv6 host: An IPv6 node that is not a router.</t>
         <t>ULA:Unique Local Address, as defined in <xref target='RFC4193'/>.</t>
