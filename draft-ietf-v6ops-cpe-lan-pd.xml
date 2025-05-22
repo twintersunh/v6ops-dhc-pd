@@ -12,7 +12,7 @@
 <?rfc compact="yes"?>
 <?rfc comments="yes"?>
 <?rfc inline="yes"?>
-<rfc category="info" ipr="trust200902" updates="7084" docName="draft-ietf-v6ops-cpe-lan-pd-08" submissionType="IETF">
+<rfc category="info" ipr="trust200902" updates="7084" docName="draft-ietf-v6ops-cpe-lan-pd-09" submissionType="IETF">
   <front>
     <title>IPv6 CE Routers LAN DHCPv6 Prefix Delegation</title>
 
