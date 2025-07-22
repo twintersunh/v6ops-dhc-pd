@@ -10,7 +10,7 @@
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="info" ipr="trust200902" updates="7084" obsoletes="" docName="draft-ietf-v6ops-cpe-lan-pd-09" number="9818" consensus="true" xml:lang="en" submissionType="IETF" tocInclude="true" sortRefs="false" symRefs="true" version="3">
 
   <front>
-    <title abbrev="IPv6 CE Router LAN DHCPv6 Prefix">IPv6 Customer Edge (CE) Routers LAN DHCPv6 Prefix Delegation</title>
+    <title abbrev="DHCPv6 PD on IPv6 CE Routers in LANs">DHCPv6 Prefix Delegation on IPv6 Customer Edge (CE) Routers in LANs</title>
     <seriesInfo name="RFC" value="9818"/>
     <author fullname="Timothy Winters" initials="T." surname="Winters">
       <organization abbrev="QA Cafe">QA Cafe</organization>
@@ -49,11 +49,13 @@ Option A:
 
 Option B:
   DHCPv6 Prefix Delegation in LANs for IPv6 Customer Edge (CE) Routers 
+
+[twinters] - Added a short mention of LAN in the abstract and went with Option A for the Title.
 -->
 
     <abstract>
       <t>This document defines requirements for IPv6 Customer Edge (CE) routers to 
-    support DHCPv6 Prefix Delegation for distributing available prefixes that were 
+    support DHCPv6 Prefix Delegation for distributing available prefixes to LAN devices that were 
     delegated to a IPv6 CE router.  This document updates RFC 7084.</t>
     </abstract>
   </front>
@@ -98,6 +100,8 @@ Or simply:
    For prefix delegation that supports CE routers, the default 
    configuration is a flat model to support zero-configuration 
    networking.
+
+[twinters] - I just left out the mention of prefix delegation, as it confused the sentence.
 -->
 
 <!--[rfced] Please clarify "multi-provisioned networks". Is there 
@@ -107,9 +111,10 @@ does not appear in past RFCs or current Internet-Drafts.
 Original:
    This document does not cover dealing with multi-provisioned networks
    with more than one provider. 
+[twinters] - I changed this to multi-prefix, thanks for the catch.
 -->
-The default configuration of CE router supporting prefix delegation is designed to be a flat model to support zero-configuration networking.</t>
-      <t>This document does not cover dealing with multi-provisioned networks with more than one provider. 
+The default configuration of CE router is designed to be a flat model to support zero-configuration networking.</t>
+      <t>This document does not cover dealing with multi-prefix networks with more than one provider. 
     Due to the complexity of a solution that would require routing, provisioning, and policy, this is out of scope of this document.</t>
     </section>
     <section anchor="Requirements_Language">
@@ -145,6 +150,7 @@ Option A:  IPv6 node: A device that implements IPv6.
    (to match RFC 8200, which is cited in the lead-in text)
 
 Option B:  IPv6 node: A device that implements the IPv6 protocol.
+[twinters] - Fixed with Option A.
 -->
 
 <!-- [rfced] FYI, for expanding GUA, "Unique" has been changed to 
@@ -155,9 +161,11 @@ Original:
 
 Current:
    GUA:  Global Unicast Address, as defined in [RFC4291].
+
+[twinters] - Agree.
 -->
       <dl spacing="normal" newline="false">
-        <dt>IPv6 node:</dt><dd>A device that implements IPv6 protocol.</dd>
+        <dt>IPv6 node:</dt><dd>A device that implements IPv6.</dd>
         <dt>IPv6 router:</dt><dd>An IPv6 node that forwards IPv6 packets not explicitly addressed to itself.</dd>
         <dt>IPv6 host:</dt><dd>An IPv6 node that is not a router.</dd>
         <dt>ULA:</dt><dd>Unique Local Address, as defined in <xref target="RFC4193"/>.</dd>
@@ -172,7 +180,7 @@ be a sentence?
 Original:
    The end-user network for IPv6 that is a stub network.
 -->
-      <t>The end-user network for IPv6 that is a stub network. <xref target="fig-1"/> illustrates the model topology.</t>
+      <t>The end-user network for IPv6 contains stub networks. <xref target="fig-1"/> illustrates the model topology.</t>
       <figure anchor="fig-1">
         <name>Example IPv6 End-User Topology</name>
         <artwork align="center"><![CDATA[
@@ -240,6 +248,7 @@ Alternatively (both plural):
             according to Section 13.3 of [RFC8415] (Identity Association
             for Prefix Delegation (IA_PD) option) on their LAN
             interfaces.
+[twinters] - The current proposal works for me.
 -->
             <t>Each IPv6 CE router <bcp14>MUST</bcp14> support IPv6 prefix assignment according to <xref target="RFC8415" section="13.3"/> 
            (Identity Association for Prefix Delegation (IA_PD) option) on its LAN interface(s).</t>
@@ -258,9 +267,10 @@ Perhaps:
             prefix as specified by L-2 in Section 4.3 of [RFC7084].  If
             insufficient prefixes are available, the IPv6 CE router MUST
             log a system management error.
+[twinters] - Added the each.
 -->
           <li>
-            <t>IPv6 CE routers <bcp14>MUST</bcp14> assign a prefix from the delegated prefix as specified by L-2 in 
+            <t>Each IPv6 CE routers <bcp14>MUST</bcp14> assign a prefix from the delegated prefix as specified by L-2 in 
            <xref target="RFC7084" section="4.3"/>. 
            If insufficient prefixes are available, the IPv6 CE router <bcp14>MUST</bcp14> log a system management error.</t>
           </li>
@@ -274,7 +284,8 @@ Perhaps:
           </li>
           <li>
             <t>IPv6 CE routers <bcp14>MUST</bcp14> maintain a local routing table that is dynamically updated with leases 
-           and the associated next hops as they are delegated to clients. When a delegated prefix is released 
+           and the associated next hops as they are delegated to clients. Packets with destination addresses in a delegated 
+           prefix MUST be routed to that prefix regardless of which interface they are received on. When a delegated prefix is released 
            or expires, the associated route <bcp14>MUST</bcp14> be removed from the IPv6 CE router's routing table. A delegated 
            prefix expires when the valid lifetime assigned in the IA_PD expires without being renewed. When a prefix
            is released or expires, it <bcp14>MUST</bcp14> be returned the pool of available prefixes.</t>
@@ -291,18 +302,20 @@ Perhaps:
  IPv6 CE routers MUST continue to drop packets,
  including destination address, that are not assigned to the
  LAN or delegated.
+
+[twinters] - Updated as suggested.
 -->
           <li>
             <t>By default, the IPv6 CE router filtering rules <bcp14>MUST</bcp14> allow forwarding of packets with an outer 
-           IPv6 header containing a source address belonging to Delegated Prefixes, along with reciprocal 
+           IPv6 header containing a source address belonging to delegated prefixes, along with reciprocal 
            packets from the same flow, following the recommendations of <xref target="RFC6092"/>. This updates WPD-5 of 
            <xref target="RFC7084"/> to not drop packets from prefixes that have been delegated. IPv6 CE routers
-           <bcp14>MUST</bcp14> continue to drop packets including destination address that is not assigned to the LAN or delegated.</t>
+           <bcp14>MUST</bcp14> continue to drop packets, including destination address, that are not assigned to the LAN or delegated.</t>
           </li>
           <li>
             <t>The IPv6 CE routers <bcp14>MUST</bcp14> provision IA_PD prefixes with a prefix-length of 64 on the LAN-facing interface 
-           unless configured to use a different prefix-length by the CE router administrator. The prefix 
-           length of 64 is used as that is the current prefix length supported by SLAAC <xref target="RFC4862"/>. For hierarchical 
+           unless configured to use a different prefix-length by the CE router administrator. The prefix-length
+           of 64 is used as that is the current prefix-length supported by SLAAC <xref target="RFC4862"/>. For hierarchical 
            prefix delegation, a prefix-length shorter than 64 may be configured.</t>
           </li>
           <li>
@@ -327,8 +340,10 @@ Or (singular):
    LPD-9:   If an IPv6 CE router is provisioning both the ULA and the GUA via
             prefix delegation, the GUA SHOULD appear first in the DHCPv6
             packets.
+
+[twinters] - Updated to singular.
 -->
-            <t>If an IPv6 CE router is provisioning both ULA and GUA via prefix delegation, the GUA <bcp14>SHOULD</bcp14> appear first in the DHCPv6 packets.</t>
+            <t>If an IPv6 CE router is provisioning both a ULA and GUA via prefix delegation, the GUA <bcp14>SHOULD</bcp14> appear first in the DHCPv6 packets.</t>
           </li>
           <li>
             <t>IPv6 CE routers <bcp14>MUST NOT</bcp14> delegate prefixes via DHCPv6 on the LAN using lifetimes that
@@ -355,12 +370,16 @@ Please let us know if you prefer otherwise.
 
    CE Router vs. CE router   [based on usage in RFC 7084]
 
+[twinters] - Agree.
+
 b) Capitalization of these terms is not consistent. Please let us 
 know your preference.
 
    Prefix Delegation vs. prefix delegation
 
    Delegated Prefix (in LPD-6) vs. delegated prefix (in LPD-2, LPD-5)
+
+[twinters] - delegated prefix (no capitalization) is correct, fixed it one other place.
 
 c) Please review usage of this term and let us know if any updates are needed.
 We note RFC 8415 uses the hyphen for the "prefix-length" field.
